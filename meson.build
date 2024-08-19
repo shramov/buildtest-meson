@@ -6,8 +6,15 @@ project('buildtest', 'c', 'cpp'
 
 fmt = dependency('fmt')
 
+link_args = []
+if host_machine.system() == 'windows'
+  link_args = ['-Wl,/DEF:@0@/@1@'.format(meson.current_source_dir(), 'src/buildtest.def')]
+endif
+
 shared_library('buildtest', ['src/buildtest.cc'],
                 include_directories: ['src'],
                 dependencies : [fmt],
+                link_args: link_args,
+                link_depends: 'src/buildtest.def',
                 version: '0', soversion: '0',
                 install : true)

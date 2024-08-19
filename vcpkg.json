@@ -1,0 +1,7 @@
+{
+  "name": "buildtest",
+  "dependencies": [
+    "fmt",
+    "pkgconf"
+   ]
+}
