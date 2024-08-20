@@ -53,13 +53,15 @@ jobs:
       run: ninja -vC build -j2
     - name: pybuild
       run: |
-        . venv/bin/activate
+        #. venv/bin/activate
+        venv/scripts/activate.bat
         cd python
-        python3 setup.py build_ext --inplace --library-dirs=../build --rpath=`pwd`/../build
+        python3 setup.py build_ext --inplace --library-dirs=../build #--rpath=`pwd`/../build
     - name: test
       run: |
         meson test -C build --no-rebuild --print-errorlogs -v
-        . venv/bin/activate
+        #. venv/bin/activate
+        venv/scripts/activate.bat
         cd python
         python3 -m pytest --log-level=DEBUG -v
 
