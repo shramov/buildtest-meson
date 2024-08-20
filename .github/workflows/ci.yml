@@ -6,25 +6,41 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v4
       with:
         fetch-depth: 1
     - name: install deps linux
-      run: sudo apt install meson pkg-config libfmt-dev python3-dev cython3 python3-pytest
+      if: ${{ startsWith(matrix.os, 'ubuntu-') }}
+      run: |
+        sudo apt install meson pkg-config libfmt-dev python3-dev cython3 python3-pytest python3-venv
+        # Fake virtualenv
+        #mkdir -p venv/bin
+        #touch venv/bin/activate
+        python3 -m venv venv --system-site-packages
+    - name: install deps macos
+      if: ${{ startsWith(matrix.os, 'macos-') }}
+      run: |
+        brew install meson fmt
+        python3 -m venv venv
+        . venv/bin/activate
+        #pip install --upgrade pip
+        pip install cython setuptools pytest
     - name: configure
       run: meson build
     - name: build
       run: ninja -vC build -j2
     - name: pybuild
       run: |
+        . venv/bin/activate
         cd python
         python3 setup.py build_ext --inplace --library-dirs=../build --rpath=`pwd`/../build
     - name: test
       run: |
         meson test -C build --no-rebuild --print-errorlogs -v
+        . venv/bin/activate
         cd python
         python3 -m pytest --log-level=DEBUG -v
 
