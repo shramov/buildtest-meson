@@ -44,7 +44,7 @@ jobs:
         vcpkg install
         python3 -m venv venv
         venv/scripts/activate.bat
-        pip install meson cython setuptools pytest
+        pip install meson ninja cython setuptools pytest
     - name: configure
       run: |
         venv/scripts/activate.bat
