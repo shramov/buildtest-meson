@@ -6,7 +6,8 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        #os: [ubuntu-latest, macos-latest]
+        os: [windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v4
@@ -28,8 +29,17 @@ jobs:
         . venv/bin/activate
         #pip install --upgrade pip
         pip install cython setuptools pytest
+    - name: install deps windows
+      if: ${{ startsWith(matrix.os, 'windows-') }}
+      run: |
+        vcpkg install
+        python3 -m venv venv
+        venv/scripts/activate.bat
+        pip install meson cython setuptools pytest
     - name: configure
-      run: meson build
+      run: |
+        venv/scripts/activate.bat
+        meson setup build --native-file vcpkg-native.txt
     - name: build
       run: ninja -vC build -j2
     - name: pybuild
