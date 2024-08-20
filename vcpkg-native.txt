@@ -3,8 +3,8 @@ vcpkg_installed_dir =  '@GLOBAL_SOURCE_ROOT@/vcpkg_installed/x64-windows/'
 
 [binaries]
 pkg-config = [ vcpkg_installed_dir + 'tools/pkgconf/pkgconf.exe']
-c_ld = 'lld-link'
-cpp_ld = 'lld-link'
+#c_ld = 'lld-link'
+#cpp_ld = 'lld-link'
 
 [built-in options]
 pkg_config_path =  [ vcpkg_installed_dir + 'lib/pkgconfig;' + vcpkg_installed_dir + 'share/pkgconfig']
