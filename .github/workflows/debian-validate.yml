@@ -1,0 +1,39 @@
+name: Validate Debian build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-24.04]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        submodules: recursive
+    - uses: actions/cache@v4
+      with:
+        path: |
+          /home/runner/.ccache
+          /home/runner/.cache/ccache
+        key: debian-validate:${{ matrix.os }}:${{ github.sha }}
+        restore-keys: 'debian-validate:${{ matrix.os }}:'
+    - name: install deps
+      run: |
+        ln -s build/debian debian
+        sudo apt update
+        sudo apt install --yes build-essential ccache
+        sudo apt satisfy --yes --no-install-recommends "`perl .github/scripts/print-build-deps.pl`"
+    - name: build
+      env:
+        CMAKE_CXX_COMPILER_LAUNCHER: ccache
+        CMAKE_C_COMPILER_LAUNCHER: ccache
+      run: dpkg-buildpackage --no-sign -b -j4
+    - name: test
+      run: |
+        sudo apt intall autopkgtest
+        autopkgtest ../*.changes -- unshare --release ${{ matrix.os }}
+
+# vim: sts=2 sw=2 et
