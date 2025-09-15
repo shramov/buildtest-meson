@@ -1,0 +1,14 @@
+Source: buildtest
+Section: devel
+Priority: optional
+Maintainer: Pavel Shramov <shramov@mexmat.net>
+Build-Depends: debhelper-compat (= 13), meson (>= 0.53), pkgconf, libfmt-dev (>= 5.3)
+Rules-Requires-Root: no
+Standards-Version: 4.7.2
+
+Package: buildtest
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Pre-Depends: ${misc:Pre-Depends}
+Multi-Arch: same
+Description: Build test package
